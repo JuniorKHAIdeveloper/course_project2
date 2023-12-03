@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import {
   Badge,
@@ -11,12 +11,17 @@ import {
 } from "@mui/material";
 import SettingsRemoteIcon from "@mui/icons-material/SettingsRemote";
 import PowerIcon from "@mui/icons-material/Power";
+import { AppContext } from "../../storage";
+import NewDevice from "../NewDevice";
+import TransitionsModal from "../core/Modal";
 
 export default function Devices() {
+  const { user, isModalOpen, setIsModalOpen } = useContext(AppContext);
+
   const [devices, setDevices] = useState([]);
 
   async function fetchDevices() {
-    const apiUrl = "/iot/tenant/deviceInfos";
+    const apiUrl = `/iot/customer/deviceInfos?customerId=${user.customerId.id}`;
 
     try {
       const response = await fetch(apiUrl);
@@ -34,44 +39,52 @@ export default function Devices() {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchDevices();
-      setDevices(data);
-    };
+    if (user) {
+      const fetchData = async () => {
+        const data = await fetchDevices();
+        setDevices(data);
+      };
 
-    fetchData();
-  }, []);
+      fetchData();
+    }
+  }, [user, isModalOpen]);
+
+  const renderedDevices = devices?.map((device) => (
+    <Grid item sm={6} md={4} xl={2} sx={{ p: 1 }}>
+      <Badge
+        badgeContent=""
+        color={`${device.active ? "success" : "error"}`}
+        sx={{ width: "100%" }}
+      >
+        <Card variant="outlined" sx={{ width: "100%" }}>
+          <CardActionArea>
+            <CardMedia component="div" height="140" alt="green iguana">
+              <SettingsRemoteIcon
+                sx={{ width: "100%", height: "100px" }}
+              />
+            </CardMedia>
+            <CardContent>
+              <Typography gutterBottom variant="h7" component="div">
+                {device.name}
+              </Typography>
+              {/* <Typography variant="body2" color="text.secondary">
+            </Typography> */}
+            </CardContent>
+          </CardActionArea>
+        </Card>
+      </Badge>
+    </Grid>
+  ))
+
+  renderedDevices.push(<NewDevice openModalHandler={() => setIsModalOpen(true)} />);
 
   return (
     <div>
       <Grid container spacing={0} sx={{ m: 0, width: "100%" }}>
-        {devices?.map((device) => (
-          <Grid item sm={6} md={4} xl={2} sx={{ p: 1 }}>
-            <Badge
-              badgeContent=""
-              color={`${device.active ? "success" : "error"}`}
-              sx={{ width: "100%" }}
-            >
-              <Card variant="outlined" sx={{width: '100%'}}>
-                <CardActionArea>
-                  <CardMedia component="div" height="140" alt="green iguana">
-                    <SettingsRemoteIcon
-                      sx={{ width: "100%", height: "100px" }}
-                    />
-                  </CardMedia>
-                  <CardContent>
-                    <Typography gutterBottom variant="h7" component="div">
-                      {device.name}
-                    </Typography>
-                    {/* <Typography variant="body2" color="text.secondary">
-                  </Typography> */}
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Badge>
-          </Grid>
-        ))}
+        {renderedDevices}
       </Grid>
+
+      <TransitionsModal open={isModalOpen} setOpen={setIsModalOpen} user={user} />
     </div>
   );
 }

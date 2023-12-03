@@ -14,6 +14,9 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import backgroundImage from "../../assets/iot.jpeg";
 import { useNavigate } from "react-router-dom";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+
 
 function Copyright(props) {
   return (
@@ -40,6 +43,20 @@ const defaultTheme = createTheme();
 export default function Authorization() {
   let navigate = useNavigate();
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = {
@@ -61,6 +78,7 @@ export default function Authorization() {
       }
       navigate('dashboard')
     } catch (error) {
+      handleClick();
       console.error("Error:", error.message);
     }
   };
@@ -146,7 +164,7 @@ export default function Authorization() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/signup" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
@@ -156,6 +174,12 @@ export default function Authorization() {
           </Box>
         </Grid>
       </Grid>
+
+      <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }} open={open} autoHideDuration={3000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          Authorization error!
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }
