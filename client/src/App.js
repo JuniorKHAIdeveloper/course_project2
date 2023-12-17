@@ -7,6 +7,11 @@ import Dashboard from "./pages/Dashboard";
 import Devices from "./components/Devices";
 import Registration from "./pages/Registration";
 import AppContextProvider from "./storage";
+import Rooms from "./components/Rooms";
+import RoomTelemetry from "./components/RoomTelemetry";
+import Alerts from "./components/Alerts";
+import AboutUs from "./components/AboutUs";
+import Account from "./components/Account";
 
 function App() {
   return (
@@ -16,12 +21,16 @@ function App() {
         <Route path="/" element={<Authorization />} />
         <Route path="/signup" element={<Registration />} />
         <Route path="/dashboard" element={<Dashboard />}>
-          <Route path="account" element={<div>Account</div>} />
+          <Route path="account" element={<Account />} />
           <Route path="devices" element={<Devices />} />
-          <Route path="rooms" element={<div>Rooms</div>} />
+          <Route path="rooms" element={<Rooms />} />
+          <Route path="rooms/:roomId" element={<RoomTelemetry />} />
+          <Route path="aboutus" element={<AboutUs />} />
         </Route>
         <Route path="*" element={<div>Not found 404</div>} />
       </Routes>
+
+      <Alerts />
       </AppContextProvider>
     </div>
   );

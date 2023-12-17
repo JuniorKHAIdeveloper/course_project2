@@ -1,0 +1,36 @@
+- split modals handlers in context
+- room router replace post with get + param
+- success alerts
+- devices update after save
+- get rid of duplicates (funstions, handlers)
+- replace rooms add device + on gear
+- if no devices to select show message "no avilale devices"
+- if devices not working shows empty charts
+- default values to return for API handlers
+- validation for forms
+- registration confirmation of password
+- UNIT TESTS
+- delete device
+- skeleton?
+
+1) account: routes, if reload page error because no data
+2) devices: loader, switch connectivity and delete button
+3) rooms: alert on create, validation, rooms devices flex scroll, filter for rooms, delete
+   room: loader, styling
+4) UNIT TESTS
+
+???
+- add switcher
+- add delete for devices
+LATER:
+- if device added to room, remove from list of available
+
+DONE:
+- add rooms + picture
+- main page rooms on redirect
+- auth frontend restrictions (works only for production version)
+- filter devices per user by id when create
+- replace things board url with env
+- encode reuests, some of them at least :)
+- footer to bottom
+- account: add store values, validation, alert,

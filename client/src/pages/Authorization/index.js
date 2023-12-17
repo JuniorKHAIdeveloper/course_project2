@@ -14,48 +14,17 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import backgroundImage from "../../assets/iot.jpeg";
 import { useNavigate } from "react-router-dom";
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
+import { useState, useContext } from 'react';
+import { AppContext } from "../../storage";
+import Copyright from "../../components/Copyright";
 
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
 export default function Authorization() {
+  const { setAlert } = useContext(AppContext);
+
   let navigate = useNavigate();
-
-  const [open, setOpen] = React.useState(false);
-
-  const handleClick = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -76,9 +45,10 @@ export default function Authorization() {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      navigate('dashboard')
+      
+      navigate('dashboard/rooms');
     } catch (error) {
-      handleClick();
+      setAlert({message: "Authorization error!", type: "error"});
       console.error("Error:", error.message);
     }
   };
@@ -145,10 +115,6 @@ export default function Authorization() {
                 id="password"
                 autoComplete="current-password"
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
               <Button
                 type="submit"
                 fullWidth
@@ -159,9 +125,6 @@ export default function Authorization() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
                 </Grid>
                 <Grid item>
                   <Link href="/signup" variant="body2">
@@ -169,17 +132,11 @@ export default function Authorization() {
                   </Link>
                 </Grid>
               </Grid>
-              <Copyright sx={{ mt: 5 }} />
+              <Copyright sx={{mt: 5}} />
             </Box>
           </Box>
         </Grid>
       </Grid>
-
-      <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }} open={open} autoHideDuration={3000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          Authorization error!
-        </Alert>
-      </Snackbar>
     </ThemeProvider>
   );
 }

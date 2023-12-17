@@ -3,7 +3,7 @@ const mqtt = require('mqtt');
 
 const hostname = '127.0.0.1';
 const port = 1883;
-const ACCESS_TOKEN ='ANREDYAPEXLEGEND';
+const ACCESS_TOKEN ='THERMOMETR_1';
 
 // Create an MQTT client
 const client = mqtt.connect(`mqtt://${hostname}:${port}`, {

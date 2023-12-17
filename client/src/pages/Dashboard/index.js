@@ -18,9 +18,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { MainListItems, mainListItems, secondaryListItems } from "./listItems";
-import Chart from "./Chart";
-import Deposits from "./Deposits";
-import Orders from "./Orders";
 import { Routes, Route, Outlet, Switch } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import { deepOrange, deepPurple } from "@mui/material/colors";
@@ -33,24 +30,9 @@ import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../storage";
+import { fetchDevices, getUserInfo, logout } from "../../API/dashboard";
+import Copyright from "../../components/Copyright";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const drawerWidth = 240;
 
@@ -103,16 +85,35 @@ const defaultTheme = createTheme();
 
 export default function Dashboard() {
   let navigate = useNavigate();
-
-  const {user, setUser} = useContext(AppContext);
-
+  const { user, setUser, setDevices, isModalOpen } = useContext(AppContext);
   const [open, setOpen] = useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openTooltip = Boolean(anchorEl);
+
+  useEffect(() => {
+    async function fetchData() {
+      const userData = await getUserInfo();
+      setUser(userData);
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      const fetchData = async () => {
+        const devicesData = await fetchDevices(user);
+        setDevices(devicesData);
+      };
+
+      fetchData();
+    }
+  }, [user, isModalOpen]);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const openTooltip = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -120,54 +121,12 @@ export default function Dashboard() {
     setAnchorEl(null);
   };
 
-  async function getUserInfo() {
-    const apiUrl = "/iot/auth/user";
-
-    try {
-      const response = await fetch(apiUrl);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      return data;
-    } catch (error) {
-      console.error("Error:", error.message);
-    }
-  }
-
-  useEffect(() => {
-    async function getUser() {
-      const data = await getUserInfo();
-      setUser(data);
-    }
-
-    getUser();
-  }, []);
-
-  async function logout() {
-    const apiUrl = "/iot/auth/logout";
-
-    try {
-      const response = await fetch(apiUrl, {
-        method: "POST",
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      navigate("../../");
-    } catch (error) {
-      console.error("Error:", error.message);
-    }
-  }
-
   const handleLogout = async () => {
     handleClose();
-    await logout();
+    const isLoggedOut = await logout();
+    if (isLoggedOut) {
+      navigate("/");
+    }
   };
 
   return (
@@ -209,7 +168,7 @@ export default function Dashboard() {
                   textAlign: "center",
                 }}
               >
-                <Tooltip title="Account settings">
+                <Tooltip title={`${user?.firstName} ${user?.lastName}`}>
                   <IconButton
                     onClick={handleClick}
                     size="small"
@@ -260,26 +219,7 @@ export default function Dashboard() {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                <MenuItem onClick={handleClose}>
-                  <Avatar /> Profile
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                  <Avatar /> My account
-                </MenuItem>
-                <Divider />
-                <MenuItem onClick={handleClose}>
-                  <ListItemIcon>
-                    <PersonAdd fontSize="small" />
-                  </ListItemIcon>
-                  Add another account
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                  <ListItemIcon>
-                    <Settings fontSize="small" />
-                  </ListItemIcon>
-                  Settings
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>
+                <MenuItem onClick={handleLogout} style={{ width: "150px" }}>
                   <ListItemIcon>
                     <Logout fontSize="small" />
                   </ListItemIcon>
@@ -320,47 +260,24 @@ export default function Dashboard() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+          <Container
+            maxWidth="xl"
+            sx={{
+              mt: 4,
+              mb: 4,
+              display: "flex",
+              minHeight: "86vh",
+              flexDirection: "column",
+            }}
+          >
             <Paper>
               <Outlet />
             </Paper>
-            <Copyright sx={{ pt: 4 }} />
+
+            <Copyright sx={{ pt: 4, marginTop: 'auto' }} />
           </Container>
         </Box>
       </Box>
     </ThemeProvider>
   );
 }
-
-// {/* Chart */}
-// <Grid item xs={12} md={8} lg={9}>
-// <Paper
-//   sx={{
-//     p: 2,
-//     display: 'flex',
-//     flexDirection: 'column',
-//     height: 240,
-//   }}
-// >
-//   <Chart />
-// </Paper>
-// </Grid>
-// {/* Recent Deposits */}
-// <Grid item xs={12} md={4} lg={3}>
-// <Paper
-//   sx={{
-//     p: 2,
-//     display: 'flex',
-//     flexDirection: 'column',
-//     height: 240,
-//   }}
-// >
-//   <Deposits />
-// </Paper>
-// </Grid>
-// {/* Recent Orders */}
-// <Grid item xs={12}>
-// <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-//   <Orders />
-// </Paper>
-// </Grid>

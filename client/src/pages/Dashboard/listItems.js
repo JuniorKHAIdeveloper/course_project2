@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
+import InfoIcon from '@mui/icons-material/Info';
 
 export function MainListItems() {
   let navigate = useNavigate(); 
@@ -41,6 +42,12 @@ export function MainListItems() {
           <MapsHomeWorkIcon />
         </ListItemIcon>
         <ListItemText primary="Rooms" />
+      </ListItemButton>
+      <ListItemButton onClick={() => navigateHandler("aboutus")}>
+        <ListItemIcon>
+          <InfoIcon />
+        </ListItemIcon>
+        <ListItemText primary="About Us" />
       </ListItemButton>
     </React.Fragment>
   );

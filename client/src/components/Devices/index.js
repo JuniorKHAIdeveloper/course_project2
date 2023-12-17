@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import {
   Badge,
+  Box,
   Card,
   CardActionArea,
   CardContent,
@@ -12,42 +13,11 @@ import {
 import SettingsRemoteIcon from "@mui/icons-material/SettingsRemote";
 import PowerIcon from "@mui/icons-material/Power";
 import { AppContext } from "../../storage";
-import NewDevice from "../NewDevice";
-import TransitionsModal from "../core/Modal";
+import NewDevice from "./NewDevice";
+import TransitionsModal from "./Modal";
 
 export default function Devices() {
-  const { user, isModalOpen, setIsModalOpen } = useContext(AppContext);
-
-  const [devices, setDevices] = useState([]);
-
-  async function fetchDevices() {
-    const apiUrl = `/iot/customer/deviceInfos?customerId=${user.customerId.id}`;
-
-    try {
-      const response = await fetch(apiUrl);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const { data } = await response.json();
-
-      return data;
-    } catch (error) {
-      console.error("Error:", error.message);
-    }
-  }
-
-  useEffect(() => {
-    if (user) {
-      const fetchData = async () => {
-        const data = await fetchDevices();
-        setDevices(data);
-      };
-
-      fetchData();
-    }
-  }, [user, isModalOpen]);
+  const { user, isModalOpen, setIsModalOpen, devices = [] } = useContext(AppContext);
 
   const renderedDevices = devices?.map((device) => (
     <Grid item sm={6} md={4} xl={2} sx={{ p: 1 }}>
@@ -58,17 +28,15 @@ export default function Devices() {
       >
         <Card variant="outlined" sx={{ width: "100%" }}>
           <CardActionArea>
-            <CardMedia component="div" height="140" alt="green iguana">
+            <CardMedia component="div" height="140" alt="green iguana" sx={{ p: 2 }}>
               <SettingsRemoteIcon
                 sx={{ width: "100%", height: "100px" }}
               />
             </CardMedia>
             <CardContent>
-              <Typography gutterBottom variant="h7" component="div">
+              <Typography variant="p" component="body" sx={{textAlign: 'center'}}>
                 {device.name}
               </Typography>
-              {/* <Typography variant="body2" color="text.secondary">
-            </Typography> */}
             </CardContent>
           </CardActionArea>
         </Card>
@@ -79,12 +47,13 @@ export default function Devices() {
   renderedDevices.push(<NewDevice openModalHandler={() => setIsModalOpen(true)} />);
 
   return (
-    <div>
-      <Grid container spacing={0} sx={{ m: 0, width: "100%" }}>
+    <Box sx={{p: 2}}>
+      <Typography component="h3" variant="h5" sx={{ml: 1, mb: 1}}>Devices:</Typography>
+      <Grid container spacing={1} sx={{ m: 0, width: "100%" }}>
         {renderedDevices}
       </Grid>
 
       <TransitionsModal open={isModalOpen} setOpen={setIsModalOpen} user={user} />
-    </div>
+    </Box>
   );
 }

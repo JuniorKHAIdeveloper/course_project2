@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useContext, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -13,41 +13,63 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
+import { AppContext } from "../../storage";
+import Copyright from "../../components/Copyright"
 
 const defaultTheme = createTheme();
 
 export default function Registration() {
+  const { setAlert } = useContext(AppContext);
   let navigate = useNavigate();
+  const [isValid, setIsValid] = useState({
+    isValidEmail: true,
+    isValidFirstName: true,
+    isValidLastName: true,
+    isValidFirstPassword: true,
+    isValidSecondPassword: true,
+  });
+
+  const isFormValid = (formData) => {
+    const { email, firstPassword, secondPassword, firstName, lastName } =
+      formData;
+
+    const validationForm = {
+      isValidEmail: true,
+      isValidFirstName: true,
+      isValidLastName: true,
+      isValidFirstPassword: true,
+      isValidSecondPassword: true,
+    };
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    validationForm.isValidEmail = emailRegex.test(email);
+    validationForm.isValidFirstPassword = firstPassword.length >= 6;
+    validationForm.isValidSecondPassword = secondPassword === firstPassword && secondPassword !== "";
+    validationForm.isValidFirstName = firstName.trim() !== "";
+    validationForm.isValidLastName = lastName.trim() !== "";
+
+    setIsValid(validationForm);
+    if (Object.values(validationForm).some((value) => value === false)) {
+      return false;
+    } else {
+      return true;
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const formData = {
       email: data.get("email"),
-      password: data.get("password"),
+      firstPassword: data.get("firstPassword"),
+      secondPassword: data.get("secondPassword"),
+      password: data.get("firstPassword"),
       firstName: data.get("firstName"),
       lastName: data.get("lastName"),
     };
+
+    if (!isFormValid(formData)) return;
+
     const apiUrl = "/iot/user";
     try {
       const response = await fetch(apiUrl, {
@@ -61,7 +83,9 @@ export default function Registration() {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      navigate("../dashboard");
+      setAlert({message: "User created!", type: "success"});
+      navigate("/");
+      // user successfully created message
     } catch (error) {
       console.error("Error:", error.message);
     }
@@ -94,6 +118,7 @@ export default function Registration() {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  error={!isValid.isValidFirstName}
                   autoComplete="given-name"
                   name="firstName"
                   required
@@ -101,45 +126,57 @@ export default function Registration() {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  helperText={!isValid.isValidFirstName ? "Field is reuiqred." : ""}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  error={!isValid.isValidLastName}
                   required
                   fullWidth
                   id="lastName"
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  helperText={!isValid.isValidLastName ? "Field is reuiqred." : ""}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  error={!isValid.isValidEmail}
                   required
                   fullWidth
                   id="email"
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  helperText={!isValid.isValidEmail ? "Not valid email." : ""}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  error={!isValid.isValidFirstPassword}
                   required
                   fullWidth
-                  name="password"
+                  name="firstPassword"
                   label="Password"
                   type="password"
-                  id="password"
+                  id="firstPassword"
                   autoComplete="new-password"
+                  helperText={!isValid.isValidFirstPassword ? "Not valid password." : ""}
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox value="allowExtraEmails" color="primary" />
-                  }
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                <TextField
+                  error={!isValid.isValidSecondPassword}
+                  required
+                  fullWidth
+                  name="secondPassword"
+                  label="Confirm password"
+                  type="password"
+                  id="secondPassword"
+                  autoComplete="new-password"
+                  helperText={!isValid.isValidSecondPassword ? "Password mismatch." : ""}
                 />
               </Grid>
             </Grid>
@@ -153,7 +190,7 @@ export default function Registration() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
