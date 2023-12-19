@@ -45,9 +45,11 @@ export default function ModalAddDevice({ open, setOpen, user, devices }) {
     rooms,
     currentRoomId,
     currentRoomDevices,
+    availableDevices,
     setCurrentRoomDevices,
     setFilteredDevices,
     setCurrentRoomId,
+    setAlert,
   } = useContext(AppContext);
 
   // useEffect(() => {
@@ -64,7 +66,7 @@ export default function ModalAddDevice({ open, setOpen, user, devices }) {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  console.log(currentRoomDevices);
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -77,8 +79,6 @@ export default function ModalAddDevice({ open, setOpen, user, devices }) {
       roomId: currentRoomId,
       devices: parsedPickedDevices,
     };
-
-    // console.log(formData);
 
     const apiUrl = "/app/room/devices";
     try {
@@ -93,8 +93,10 @@ export default function ModalAddDevice({ open, setOpen, user, devices }) {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      setAlert({message: "Devices added!", type: 'success'})
       handleClose();
     } catch (error) {
+      setAlert({message: "Devices not added!", type: 'error'})
       console.error("Error:", error.message);
     }
 

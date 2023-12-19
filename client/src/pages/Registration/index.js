@@ -126,7 +126,7 @@ export default function Registration() {
                   id="firstName"
                   label="First Name"
                   autoFocus
-                  helperText={!isValid.isValidFirstName ? "Field is reuiqred." : ""}
+                  helperText={!isValid.isValidFirstName ? "Field is required." : ""}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -138,7 +138,7 @@ export default function Registration() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
-                  helperText={!isValid.isValidLastName ? "Field is reuiqred." : ""}
+                  helperText={!isValid.isValidLastName ? "Field is required." : ""}
                 />
               </Grid>
               <Grid item xs={12}>

@@ -1,4 +1,6 @@
 import React, { createContext } from "react";
+import { fetchDevices } from "../API/dashboard";
+import { fetchRooms } from "../API/rooms";
 
 export const AppContext = createContext({
   user: null,
@@ -9,6 +11,7 @@ export const AppContext = createContext({
   currentRoomDevices: [],
   rooms: [],
   alert: null,
+  availableDevices: [],
 });
 
 export default function AppContextProvider({ children }) {
@@ -20,6 +23,8 @@ export default function AppContextProvider({ children }) {
     currentRoomId: "",
     currentRoomDevices: [],
     rooms: [],
+    isDevicesLoading: true,
+    availableDevices: [],
   });
 
   const setUser = (value) => {
@@ -36,6 +41,7 @@ export default function AppContextProvider({ children }) {
       return {
         ...currentState,
         devices: value,
+        isDevicesLoading: false,
       };
     });
   };
@@ -95,6 +101,50 @@ export default function AppContextProvider({ children }) {
   };
 
   const setAlert = (value) => {
+    console.log("runs!")
+    setData((currentState) => {
+      return {
+        ...currentState,
+        alert: value,
+      };
+    });
+  };
+
+  const updateDevices = async () => {
+    const fetchData = async () => {
+      const devicesData = await fetchDevices(user);
+      
+      return devicesData;
+    };
+
+    const data = await fetchData();
+
+    setData((currentState) => {
+      return {
+        ...currentState,
+        devices: data,
+      };
+    });
+  }
+
+  const updateRooms = async (user) => {
+      const fetchData = async () => {
+        const roomsData = await fetchRooms(user);
+        
+        return roomsData;
+      };
+  
+      const data = await fetchData();
+
+      setData((currentState) => {
+        return {
+          ...currentState,
+          rooms: data,
+        };
+      });
+  }
+
+  const setAvailableDevices = (value) => {
     setData((currentState) => {
       return {
         ...currentState,
@@ -112,6 +162,8 @@ export default function AppContextProvider({ children }) {
     currentRoomDevices,
     rooms,
     alert,
+    isDevicesLoading,
+    availableDevices,
   } = data;
 
   return (
@@ -125,6 +177,8 @@ export default function AppContextProvider({ children }) {
         currentRoomDevices,
         rooms,
         alert,
+        isDevicesLoading,
+        availableDevices,
         setUser,
         setDevices,
         setIsModalOpen,
@@ -134,6 +188,9 @@ export default function AppContextProvider({ children }) {
         setRooms,
         setFilteredDevices,
         setAlert,
+        updateDevices,
+        updateRooms,
+        setAvailableDevices,
       }}
     >
       {children}

@@ -7,6 +7,8 @@ import ModalNewRoom from "./ModalNewRoom";
 import NewRoom from "./NewRoom";
 import Room from "./Room";
 import Typography from "@mui/material/Typography";
+import { fetchRooms } from "../../API/rooms";
+
 
 export default function Rooms() {
   const {
@@ -16,50 +18,24 @@ export default function Rooms() {
     isModalOpen,
     setIsModalOpen,
     isModalAddDeviceOpen,
+    availableDevices,
     setIsModalAddDeviceOpen,
     currentRoomId,
     setCurrentRoomId,
     setCurrentRoomDevices,
     setRooms,
+    updateRooms,
+    setAvailableDevices,
   } = useContext(AppContext);
 
   
   // const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  console.log("Rooms:" , rooms)
-  console.log("RoomId:" , currentRoomId)
 
-  async function fetchRooms() {
-    const apiUrl = "/app/rooms";
-    const formData = {
-      userId: user.id.id,
-    };
-
-    try {
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      return data;
-    } catch (error) {
-      console.error("Error:", error.message);
-    }
-  }
   useEffect(() => {
     if (user) {
       const fetchData = async () => {
-        const data = await fetchRooms();
-        console.log(data);
+        const data = await fetchRooms(user);
         setRooms(data);
         setIsLoading(false);
       };
@@ -69,7 +45,7 @@ export default function Rooms() {
   }, [user, isModalOpen, isModalAddDeviceOpen]);
 
   function getDevicesWithConnectionStatus(allDevices, currentRoomDevices) {
-    return allDevices.map(device => {
+    return allDevices?.map(device => {
       const isConnected = currentRoomDevices.includes(device.id.id);
       return {
         deviceId: device.id.id,
@@ -82,6 +58,16 @@ export default function Rooms() {
   function currentRoomDevicesHandler(allDevices, currentRoomDevices) {
     const parsedDevices = getDevicesWithConnectionStatus(allDevices, currentRoomDevices);
     setCurrentRoomDevices(parsedDevices);
+  }
+
+  function filterDevices(roomId) {
+    const otherRooms = rooms.filter((room) => room._id !== roomId);
+    const otherRoomsDevices = otherRooms.map((room) => room.devices);
+    const arrayOtherDevices = otherRoomsDevices.flat();
+    const currentRoomAvailableDevices = devices.filter((device) => !arrayOtherDevices.includes(device.id.id));
+    console.log(devices)
+    console.log('Array of devices', currentRoomAvailableDevices);
+    return currentRoomAvailableDevices;
   }
 
   return (
@@ -107,7 +93,8 @@ export default function Rooms() {
                 setOpen={() => {
                   setIsModalAddDeviceOpen(true);
                   setCurrentRoomId(room._id);
-                  currentRoomDevicesHandler(devices, room.devices);
+                  const roomDevices = filterDevices(room._id)
+                  currentRoomDevicesHandler(roomDevices, room.devices);
                 }}
               />
             ))

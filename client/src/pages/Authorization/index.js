@@ -28,9 +28,10 @@ export default function Authorization() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const data = new FormData(event.currentTarget);
     const formData = {
-      username: event.target.email.value,
-      password: event.target.password.value,
+      username: data.get("email"),
+      password: data.get("password"),
     };
     const apiUrl = "/iot/auth/login";
     try {
@@ -100,6 +101,7 @@ export default function Authorization() {
                 required
                 fullWidth
                 id="email"
+                data-testid="email"
                 label="Email Address"
                 name="email"
                 autoComplete="email"
@@ -113,6 +115,7 @@ export default function Authorization() {
                 label="Password"
                 type="password"
                 id="password"
+                data-testid="password"
                 autoComplete="current-password"
               />
               <Button
@@ -120,6 +123,7 @@ export default function Authorization() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                data-testid="submit"
               >
                 Sign In
               </Button>

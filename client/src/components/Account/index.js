@@ -15,12 +15,12 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../storage";
+import { CircularProgress } from "@mui/material";
 
 const defaultTheme = createTheme();
 
 export default function Account() {
-  const { setAlert, user } = useContext(AppContext);
-  const [userData, setUserData] = useState(user);
+  const { setAlert, user = {} } = useContext(AppContext);
 
   let navigate = useNavigate();
   const [isProfileValid, setIsProfileValid] = useState({
@@ -57,7 +57,7 @@ export default function Account() {
   };
 
   const isSecurityFormValid = (formData) => {
-    const { oldPassword, newPassword, confirmPassword } = formData;
+    const { currentPassword, newPassword, confirmPassword } = formData;
 
     const validationForm = {
       isValidOldPassword: true,
@@ -65,7 +65,7 @@ export default function Account() {
       isValidConfirmPassword: true,
     };
 
-    validationForm.isValidOldPassword = oldPassword.length >= 6;
+    validationForm.isValidOldPassword = currentPassword.length >= 6;
     validationForm.isValidNewPassword = newPassword.length >= 6;
     validationForm.isValidConfirmPassword =
       confirmPassword === newPassword && confirmPassword !== "";
@@ -91,17 +91,17 @@ export default function Account() {
 
     const apiUrl = "/iot/user";
     try {
-      // const response = await fetch(apiUrl, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
+      const response = await fetch(apiUrl, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...user, ...formData }),
+      });
 
-      // if (!response.ok) {
-      //   throw new Error(`HTTP error! Status: ${response.status}`);
-      // }
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
       setAlert({ message: "User is updated!", type: "success" });
     } catch (error) {
       setAlert({ message: "User not updated!", type: "error" });
@@ -113,26 +113,27 @@ export default function Account() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const formData = {
-      oldPassword: data.get("oldPassword"),
+      userId: user.id.id,
+      currentPassword: data.get("currentPassword"),
       newPassword: data.get("newPassword"),
       confirmPassword: data.get("confirmPassword"),
     };
 
     if (!isSecurityFormValid(formData)) return;
 
-    const apiUrl = "/iot/user";
+    const apiUrl = "/iot/auth/changePassword";
     try {
-    //   const response = await fetch(apiUrl, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(formData),
-    //   });
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
 
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! Status: ${response.status}`);
-    //   }
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
       setAlert({ message: "Password is updated!", type: "success" });
     } catch (error) {
       setAlert({ message: "Password not updated!", type: "error" });
@@ -142,7 +143,7 @@ export default function Account() {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Grid container>
+      {user ? (<Grid container>
         <Grid item xs={12} xl={6} sx={{ px: 2 }}>
           <Box
             sx={{
@@ -172,10 +173,12 @@ export default function Account() {
                     fullWidth
                     id="firstName"
                     label="First Name"
-                    defaultValue={userData.firstName}
+                    defaultValue={user.firstName}
                     error={!isProfileValid.isValidFirstName}
                     helperText={
-                      !isProfileValid.isValidFirstName ? "Field is reuiqred." : ""
+                      !isProfileValid.isValidFirstName
+                        ? "Field is required."
+                        : ""
                     }
                   />
                 </Grid>
@@ -187,10 +190,12 @@ export default function Account() {
                     label="Last Name"
                     name="lastName"
                     autoComplete="family-name"
-                    defaultValue={userData.lastName}
+                    defaultValue={user.lastName}
                     error={!isProfileValid.isValidLastName}
                     helperText={
-                      !isProfileValid.isValidLastName ? "Field is reuiqred." : ""
+                      !isProfileValid.isValidLastName
+                        ? "Field is required."
+                        : ""
                     }
                   />
                 </Grid>
@@ -202,9 +207,11 @@ export default function Account() {
                     label="Email Address"
                     name="email"
                     autoComplete="email"
-                    defaultValue={userData.email}
+                    defaultValue={user.email}
                     error={!isProfileValid.isValidEmail}
-                    helperText={!isProfileValid.isValidEmail ? "Not valid email." : ""}
+                    helperText={
+                      !isProfileValid.isValidEmail ? "Not valid email." : ""
+                    }
                   />
                 </Grid>
               </Grid>
@@ -244,14 +251,16 @@ export default function Account() {
                   <TextField
                     required
                     fullWidth
-                    name="oldPassword"
+                    name="currentPassword"
                     label="Old password"
                     type="password"
-                    id="oldPassword"
+                    id="currentPassword"
                     autoComplete="new-password"
                     error={!isSecurityValid.isValidOldPassword}
                     helperText={
-                      !isSecurityValid.isValidOldPassword ? "Not valid password." : ""
+                      !isSecurityValid.isValidOldPassword
+                        ? "Not valid password."
+                        : ""
                     }
                   />
                 </Grid>
@@ -266,7 +275,9 @@ export default function Account() {
                     autoComplete="new-password"
                     error={!isSecurityValid.isValidNewPassword}
                     helperText={
-                      !isSecurityValid.isValidNewPassword ? "Not valid password." : ""
+                      !isSecurityValid.isValidNewPassword
+                        ? "Not valid password."
+                        : ""
                     }
                   />
                 </Grid>
@@ -281,7 +292,9 @@ export default function Account() {
                     autoComplete="new-password"
                     error={!isSecurityValid.isValidConfirmPassword}
                     helperText={
-                      !isSecurityValid.isValidConfirmPassword ? "Password mismatch." : ""
+                      !isSecurityValid.isValidConfirmPassword
+                        ? "Password mismatch."
+                        : ""
                     }
                   />
                 </Grid>
@@ -297,7 +310,13 @@ export default function Account() {
             </Box>
           </Box>
         </Grid>
-      </Grid>
+      </Grid>) : (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: 'center', minHeight: '389px' }}>
+          <span>
+            <CircularProgress size={100} />
+          </span>
+        </Box>
+      )}
     </Box>
   );
 }

@@ -10,12 +10,12 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { Box, Typography } from "@mui/material";
 
 export default function RoomTelemetry() {
   const { roomId } = useParams();
   const { user } = useContext(AppContext);
-  const [messages, setMessages] = useState([]);
-  console.log(messages)
+  const [messages, setMessages] = useState([{}]);
 
   useEffect(() => {
     if (user) {
@@ -42,37 +42,45 @@ export default function RoomTelemetry() {
   return (
     <div style={{ height: "fit-content" }}>
       {messages?.map((object) => {
-          const key = Object.keys(object)[0];
-          const data = object[key];
-          const reversedData = data?.slice().reverse();
-          
-          return (key && <div>
-            <h3>{key?.[0].toUpperCase() + key?.slice(1)}</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart
-              data={reversedData}
-              margin={{
-                top: 10,
-                right: 30,
-                left: 0,
-                bottom: 0,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="value" />
-              <YAxis />
-              <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#8884d8"
-                fill="#8884d8"
-                isAnimationActive={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-          </div>);
-        })}
+        const key = Object.keys(object)[0];
+        const data = object[key];
+        const reversedData =
+          typeof data !== "string" ? data?.slice().reverse() : [];
+
+        return (
+          key &&
+          typeof data !== "string" && (
+            <Box sx={{p: 2}}>
+              <Typography component="h3" variant="h5" sx={{ mb: 2 }}>
+                {key?.[0].toUpperCase() + key?.slice(1)}
+              </Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart
+                  data={reversedData}
+                  margin={{
+                    top: 10,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="value" />
+                  <YAxis />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    isAnimationActive={false}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </Box>
+          )
+        );
+      })}
     </div>
   );
 }

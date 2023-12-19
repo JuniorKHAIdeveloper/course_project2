@@ -58,7 +58,7 @@ export default function DeviceConnect({
         }}
         onClick={() => pickHandler()}
       >
-        <CardActionArea>
+        <CardActionArea name={currentDevice?.name}>
           <CardMedia component="div" height="140" alt="green iguana">
             <SettingsRemoteIcon sx={{ width: "100%", height: "100px" }} />
           </CardMedia>

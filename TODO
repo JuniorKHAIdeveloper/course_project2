@@ -13,17 +13,19 @@
 - delete device
 - skeleton?
 
-1) account: routes, if reload page error because no data
-2) devices: loader, switch connectivity and delete button
-3) rooms: alert on create, validation, rooms devices flex scroll, filter for rooms, delete
+1) account: 
+2) devices: switch connectivity, new device validation
+3) rooms: 
    room: loader, styling
 4) UNIT TESTS
+5) rename App react header
 
 ???
 - add switcher
 - add delete for devices
 LATER:
 - if device added to room, remove from list of available
+- rooms devices flex scroll
 
 DONE:
 - add rooms + picture
@@ -33,4 +35,6 @@ DONE:
 - replace things board url with env
 - encode reuests, some of them at least :)
 - footer to bottom
-- account: add store values, validation, alert,
+- account: add store values, validation, alert, routes, if reload page error because no data
+- devices: loader, delete button
+- rooms: alert on create, delete, validation, filter for rooms

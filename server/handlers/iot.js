@@ -253,7 +253,7 @@ async function createDevice(req, jwttoken) {
       credentialsId: accessToken,
     },
   };
-
+console.log(jwttoken)
   const response = await fetch(apiUrl, {
     method: "POST",
     headers: {
@@ -267,7 +267,7 @@ async function createDevice(req, jwttoken) {
     throw new Error(`HTTP error! Status: ${response.status}`);
   }
   const data = await response.json();
-  
+
   return data.id.id;
 }
 
@@ -287,6 +287,45 @@ async function assignDeviceToCustomer(req, jwttoken, deviceId) {
   }
 }
 
+async function updateUser(req) {
+  const apiUrl = `${process.env.THINGSBOARD_URL}/api/user?sendActivationMail=false`;
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Authorization": `Bearer ${req.cookies.jwttoken}`,
+    },
+    body: JSON.stringify(req.body),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+  const data = await response.json();
+
+  return data;
+}
+
+async function deleteDevice(req, jwttoken) {
+  const apiUrl = `${process.env.THINGSBOARD_URL}/api/customer/device/${req.query.deviceId}`;
+
+  const response = await fetch(apiUrl, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Authorization": `Bearer ${jwttoken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+  const data = await response.json();
+
+  return data;
+}
+
 module.exports = {
   authAdmin,
   authUser,
@@ -299,4 +338,6 @@ module.exports = {
   setUserPassword,
   createDevice,
   assignDeviceToCustomer,
+  updateUser,
+  deleteDevice,
 };

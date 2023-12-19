@@ -190,4 +190,24 @@ router.post("/app/rooms", async (req, res) => {
   }
 });
 
+router.delete("/app/room", async (req, res) => {
+  const { userId, roomId } = req.body;
+console.log(req.body)
+  try {
+    const user = await User.findOne({ userId });
+    if (user && req.cookies.jwttoken === user.token) {
+      const filteredRooms = user.rooms.filter((room) => room._id != roomId)
+      user.rooms = filteredRooms;
+      console.log(filteredRooms)
+      await user.save();
+    } else {
+      throw new Error();
+    }
+    res.status(201).send();
+  } catch (e) {
+    console.log(e);
+    res.status(500).send();
+  }
+});
+
 module.exports = router;

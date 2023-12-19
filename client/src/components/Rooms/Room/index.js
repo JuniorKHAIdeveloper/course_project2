@@ -1,25 +1,53 @@
-import {useContext} from "react";
-import { Box, Card, Grid, Typography } from "@mui/material";
+import { useContext } from "react";
+import { Box, Card, Grid, ToggleButton, Typography } from "@mui/material";
 import placeholderSvg from "../../../assets/clean-room.svg";
 import RoomDevices from "../RoomDevices";
 import { AppContext } from "../../../storage";
 import ModalAddDevice from "../ModalAddDevice";
 import { useNavigate } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function Room({ data, setOpen }) {
+  const {user, setAlert, updateRooms} = useContext(AppContext)
   let navigate = useNavigate();
   function clickHandler() {
-    navigate(`${data._id}`)
+    navigate(`${data._id}`);
   }
+
+  const roomDeleteHandler = async (e, roomId) => {
+    e.stopPropagation();
+    const formData = {
+      userId: user.id.id,
+      roomId,
+    };
+
+    const apiUrl = "/app/room";
+    try {
+      const response = await fetch(apiUrl, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      updateRooms(user);
+      setAlert({ message: "Room deleted!", type: "success" });
+    } catch (error) {
+      setAlert({ message: "Room not created!", type: "error" });
+      console.error("Error:", error.message);
+    }
+  };
+
   return (
-    <Card
-      variant="outlined"
-      sx={{ display: "flex", mt: 2 }}
-    >
-      <div style={{ flex: 1, cursor: 'pointer' }} onClick={clickHandler}>
+    <Card variant="outlined" sx={{ display: "flex", mt: 2 }}>
+      <div style={{ flex: 1, cursor: "pointer" }} onClick={clickHandler}>
         {data.image ? (
           <Box
-          sx={{
+            sx={{
               background: `url(${data.image}) center/cover no-repeat`,
               width: "100%",
               aspectRatio: "2/1",
@@ -45,6 +73,7 @@ export default function Room({ data, setOpen }) {
               width: "100%",
               aspectRatio: "2/1",
               pt: 2,
+              position: "relative",
             }}
           >
             <Typography
@@ -58,6 +87,17 @@ export default function Room({ data, setOpen }) {
             >
               {data.name}
             </Typography>
+            <ToggleButton
+              sx={{
+                right: "10px",
+                bottom: "10px",
+                background: "rgb(240, 240, 240, 0.8)",
+                position: "absolute",
+              }}
+              onClick={(e) => roomDeleteHandler(e, data._id)}
+            >
+              <DeleteIcon />
+            </ToggleButton>
           </Box>
         )}
       </div>

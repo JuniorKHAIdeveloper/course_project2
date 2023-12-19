@@ -7,7 +7,7 @@ import DeviceItem from "./DeviceItem";
 export default function RoomDevices({ openModalHandler, room }) {
   const {devices = []} = useContext(AppContext)
   const devicesCopy = devices.slice();
-  console.log(devicesCopy)
+
   const renderedDevices = devicesCopy.filter((device) => room.devices.includes(device.id.id)).map((device) => (
     <DeviceItem device={device} />
   ));

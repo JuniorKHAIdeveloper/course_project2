@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -15,6 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import ImageUpload from "./ImageUpload";
+import { AppContext } from "../../../storage";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -39,21 +40,31 @@ const style = {
 };
 
 export default function TransitionsModal({ open, setOpen, user }) {
+  const { setAlert } = useContext(AppContext);
   const [image, setImage] = useState(null);
+  const [isValid, setIsValid] = useState(true);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const isFormValid = (value) => {
+    const isValid = value !== "";
+
+    setIsValid(isValid);
+    return isValid;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const roomName = data.get("roomName");
     const formData = {
       userId: user.id.id,
-      name: data.get("roomName"),
+      name: roomName,
       image: image,
     };
 
-    console.log(formData)
+    if (!isFormValid(roomName)) return;
 
     const apiUrl = "/app/room";
     try {
@@ -68,8 +79,10 @@ export default function TransitionsModal({ open, setOpen, user }) {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      setAlert({ message: "Room created!", type: "success" });
       handleClose();
     } catch (error) {
+      setAlert({ message: "Room not created!", type: "error" });
       console.error("Error:", error.message);
     }
   };
@@ -117,7 +130,15 @@ export default function TransitionsModal({ open, setOpen, user }) {
                 onSubmit={handleSubmit}
                 sx={{ m: 0, p: 0, width: "600px" }}
               >
-                <DialogContent dividers sx={{ maxHeight: "600px", display: 'flex', flexDirection: "column", alignItems: 'center' }}>
+                <DialogContent
+                  dividers
+                  sx={{
+                    maxHeight: "600px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
                   <TextField
                     margin="normal"
                     required
@@ -125,6 +146,8 @@ export default function TransitionsModal({ open, setOpen, user }) {
                     id="roomName"
                     label="Room name"
                     name="roomName"
+                    error={!isValid}
+                    helperText={!isValid ? "Field is required." : ""}
                   />
                   <ImageUpload image={image} setImage={setImage} />
                 </DialogContent>

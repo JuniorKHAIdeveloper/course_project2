@@ -19,7 +19,6 @@ export function MainListItems() {
   let navigate = useNavigate(); 
 
   function navigateHandler(url) {
-    console.log(url);
     navigate(url);
   }
 

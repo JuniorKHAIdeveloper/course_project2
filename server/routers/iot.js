@@ -11,6 +11,8 @@ const {
   setUserPassword,
   createDevice,
   assignDeviceToCustomer,
+  updateUser,
+  deleteDevice,
 } = require("../handlers/iot");
 const User = require("../models/user");
 const router = new express.Router();
@@ -74,6 +76,53 @@ router.post("/iot/user", async (req, res) => {
   }
 });
 
+// update user
+router.patch("/iot/user", async (req, res) => {
+  try {
+    await updateUser(req)
+   
+    res.status(201).send();
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(400).send();
+  }
+});
+
+async function changePassword(req) {
+  const apiUrl = `${process.env.THINGSBOARD_URL}/api/auth/changePassword`;
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Authorization": `Bearer ${req.cookies.jwttoken}`,
+    },
+    body: JSON.stringify(req.body),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+  const data = await response.json();
+
+  return data;
+}
+
+// change password
+router.post("/iot/auth/changePassword", async (req, res) => {
+  const {userId} = req.body;
+  try {
+    const newToken = await changePassword(req)
+   
+    await User.updateOne({ userId: userId }, { token: newToken.token });
+    res.cookie("jwttoken", newToken.token);
+    res.status(201).send();
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(400).send();
+  }
+});
+
 // get user data
 router.get("/iot/auth/user", async (req, res) => {
   try {
@@ -120,6 +169,7 @@ router.post("/iot/device-with-credentials", async (req, res) => {
     const deviceId = await createDevice(req, jwttoken);
     // save device to user app db
     const user = await User.findOne({ userId });
+    console.log(deviceId)
     if (user && req.cookies.jwttoken === user.token) {
       user.devices.push(deviceId);
       await user.save();
@@ -131,7 +181,20 @@ router.post("/iot/device-with-credentials", async (req, res) => {
 
     res.status(201).send();
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error("Error:", error);
+    res.status(401).send();
+  }
+});
+
+router.delete("/iot/customer/device/", async (req, res) => {
+  try {
+    // tenant auth
+    const jwttoken = await authAdmin();
+    await deleteDevice(req, jwttoken);
+
+    res.status(201).send();
+  } catch (error) {
+    console.error("Error:", error);
     res.status(401).send();
   }
 });
