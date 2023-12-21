@@ -12,6 +12,7 @@ import RoomTelemetry from "./components/RoomTelemetry";
 import Alerts from "./components/Alerts";
 import AboutUs from "./components/AboutUs";
 import Account from "./components/Account";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -27,7 +28,8 @@ function App() {
           <Route path="rooms/:roomId" element={<RoomTelemetry />} />
           <Route path="aboutus" element={<AboutUs />} />
         </Route>
-        <Route path="*" element={<div>Not found 404</div>} />
+        <Route path="/notfound" element={<NotFound />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       <Alerts />

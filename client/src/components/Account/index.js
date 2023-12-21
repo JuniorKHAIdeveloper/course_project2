@@ -216,6 +216,7 @@ export default function Account() {
                 </Grid>
               </Grid>
               <Button
+              id="submit-profile"
                 type="submit"
                 fullWidth
                 variant="contained"
@@ -300,6 +301,7 @@ export default function Account() {
                 </Grid>
               </Grid>
               <Button
+                id="submit-security"
                 type="submit"
                 fullWidth
                 variant="contained"

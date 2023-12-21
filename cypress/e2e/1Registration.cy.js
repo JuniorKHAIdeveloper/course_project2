@@ -1,6 +1,6 @@
 describe("Registration Page", () => {
   it("account registration empty data validation", () => {
-    cy.visit("http://localhost:3000/signup");
+    cy.visit(`${Cypress.env("host")}/signup`);
     cy.get('[type="submit"]').click();
     cy.get("#firstName-helper-text").contains("Field is required.");
     cy.get("#lastName-helper-text").contains("Field is required.");
@@ -10,16 +10,14 @@ describe("Registration Page", () => {
   });
 
   it("account registration fill data success", () => {
-    cy.visit("http://localhost:3000/signup");
-    cy.get('[name="firstName"]').type("test");
-    cy.get('[name="lastName"]').type("test");
-    cy.get('[name="email"]').type("test1@test.test");
-    cy.get('[name="firstPassword"]').type("testtest");
-    cy.get('[name="secondPassword"]').type("testtest");
+    cy.visit(`${Cypress.env("host")}/signup`);
+    cy.get('[name="firstName"]').type(Cypress.env("firstName"));
+    cy.get('[name="lastName"]').type(Cypress.env("lastName"));
+    cy.get('[name="email"]').type(Cypress.env("email"));
+    cy.get('[name="firstPassword"]').type(Cypress.env("password"));
+    cy.get('[name="secondPassword"]').type(Cypress.env("password"));
     cy.get('[type="submit"]').click();
     cy.get("body").contains("User created!");
-    cy.url().then((url) => {
-      expect(url).to.equal("http://localhost:3000/");
-    });
+    cy.url().should('eq', `${Cypress.env("host")}/`);
   });
 });

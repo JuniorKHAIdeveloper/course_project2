@@ -25,8 +25,11 @@ app.use(express.json({ limit: "50mb" }));
 // Middleware to check if cookies are empty
 const checkCookiesMiddleware = (req, res, next) => {
   if (!req.cookies.jwttoken && req.path.includes('dashboard')) {
+    console.log(req.path.includes('dashboard'))
     // Cookies are empty, respond with "Unauthorized"
-    return res.status(401).send('Unauthorized! Permission denied.');
+    // return res.status(401).send('Unauthorized! Permission denied.');
+    // return res.sendFile(path.join(__dirname, "../client/build","unauthorized.html"));
+    return res.sendFile(path.join(__dirname, "../client/public", "unauthorized.html"));
   }
   next(); // Move to the next middleware or route handler
 };

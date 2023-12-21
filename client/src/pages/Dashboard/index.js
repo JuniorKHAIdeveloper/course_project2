@@ -177,7 +177,7 @@ export default function Dashboard() {
                     aria-haspopup="true"
                     aria-expanded={openTooltip ? "true" : undefined}
                   >
-                    <Avatar sx={{ bgcolor: deepPurple[500] }}>
+                    <Avatar sx={{ bgcolor: deepPurple[500] }} id="avatar">
                       {user?.firstName?.[0].toUpperCase()}
                       {user?.lastName?.[0].toUpperCase()}
                     </Avatar>
@@ -219,7 +219,7 @@ export default function Dashboard() {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                <MenuItem onClick={handleLogout} style={{ width: "150px" }}>
+                <MenuItem onClick={handleLogout} style={{ width: "150px" }} id="logout">
                   <ListItemIcon>
                     <Logout fontSize="small" />
                   </ListItemIcon>

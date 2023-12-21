@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useContext } from 'react';
 import { AppContext } from "../../storage";
 import Copyright from "../../components/Copyright";
+import Logo from "../../components/Logo";
 
 
 const defaultTheme = createTheme();
@@ -72,8 +73,11 @@ export default function Authorization() {
                 : t.palette.grey[900],
             backgroundSize: "cover",
             backgroundPosition: "center",
+            position: 'relative',
           }}
-        />
+        >
+          <Logo />
+        </Grid>
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{

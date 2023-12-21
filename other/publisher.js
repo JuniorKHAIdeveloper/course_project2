@@ -3,7 +3,7 @@ const mqtt = require('mqtt');
 
 const hostname = '127.0.0.1';
 const port = 1883;
-const ACCESS_TOKEN ='THERMOMETR_1';
+const ACCESS_TOKEN ='DEVICE_1';
 
 // Create an MQTT client
 const client = mqtt.connect(`mqtt://${hostname}:${port}`, {
@@ -26,7 +26,7 @@ function getRandomNumber(min, max) {
 
 function publishTemperature() {
   const temperature = getRandomNumber(10,20); // Generate random temperature data
-  const message = JSON.stringify({ temperature: temperature });
+  const message = JSON.stringify({ "temperature": temperature });
 
   client.publish(topic, message);
   // console.log(`Published: ${message}`);
