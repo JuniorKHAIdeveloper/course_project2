@@ -1,42 +1,21 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import { Card } from "@mui/material";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
-import { Card } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Fade from "@mui/material/Fade";
 import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import { styled } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
 import { AppContext } from "../../../storage";
+import { BootstrapDialog, style } from "./styles";
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-}));
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  // border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-  position: "relative",
-};
 
 export default function TransitionsModal({ open, setOpen, user }) {
   const { setAlert } = useContext(AppContext);
@@ -66,10 +45,10 @@ export default function TransitionsModal({ open, setOpen, user }) {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      setAlert({message: "Device created!", type: "success"}); 
+      setAlert({ message: "Device created!", type: "success" });
       handleClose();
     } catch (error) {
-      setAlert({message: "Device not created!", type: "error"}); 
+      setAlert({ message: "Device not created!", type: "error" });
       console.error("Error:", error.message);
     }
   };
@@ -80,7 +59,6 @@ export default function TransitionsModal({ open, setOpen, user }) {
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
-        // onClose={handleClose}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         slotProps={{

@@ -1,17 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
-import Grid from "@mui/material/Grid";
+import React from "react";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import SettingsRemoteIcon from "@mui/icons-material/SettingsRemote";
 import {
-  Badge,
   Card,
   CardActionArea,
   CardContent,
-  CardHeader,
   CardMedia,
   Typography,
 } from "@mui/material";
-import SettingsRemoteIcon from "@mui/icons-material/SettingsRemote";
-import PowerIcon from "@mui/icons-material/Power";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Grid from "@mui/material/Grid";
+
 
 export default function DeviceConnect({
   devices,
@@ -25,7 +23,8 @@ export default function DeviceConnect({
       ...currentDevice,
       isConnected: !currentDevice.isConnected,
     };
-    if (currentDeviceIndex !== -1) devicesCopy[currentDeviceIndex] = updatedDevice;
+    if (currentDeviceIndex !== -1)
+      devicesCopy[currentDeviceIndex] = updatedDevice;
     setCurrentRoomDevices(devicesCopy);
   }
 

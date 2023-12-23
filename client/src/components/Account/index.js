@@ -1,28 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import React, { useContext, useState } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
-import { AppContext } from "../../storage";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { CircularProgress } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { AppContext } from "../../storage";
 
-const defaultTheme = createTheme();
 
 export default function Account() {
   const { setAlert, user = {} } = useContext(AppContext);
-
-  let navigate = useNavigate();
   const [isProfileValid, setIsProfileValid] = useState({
     isValidFirstName: true,
     isValidLastName: true,
@@ -123,17 +113,17 @@ export default function Account() {
 
     const apiUrl = "/iot/auth/changePassword";
     try {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
       setAlert({ message: "Password is updated!", type: "success" });
     } catch (error) {
       setAlert({ message: "Password not updated!", type: "error" });
@@ -143,177 +133,186 @@ export default function Account() {
 
   return (
     <Box sx={{ p: 2 }}>
-      {user ? (<Grid container>
-        <Grid item xs={12} xl={6} sx={{ px: 2 }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <AccountCircleIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Profile
-            </Typography>
+      {user ? (
+        <Grid container>
+          <Grid item xs={12} xl={6} sx={{ px: 2 }}>
             <Box
-              component="form"
-              noValidate
-              onSubmit={handleProfileSubmit}
-              sx={{ mt: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    autoComplete="given-name"
-                    name="firstName"
-                    required
-                    fullWidth
-                    id="firstName"
-                    label="First Name"
-                    defaultValue={user.firstName}
-                    error={!isProfileValid.isValidFirstName}
-                    helperText={
-                      !isProfileValid.isValidFirstName
-                        ? "Field is required."
-                        : ""
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="lastName"
-                    label="Last Name"
-                    name="lastName"
-                    autoComplete="family-name"
-                    defaultValue={user.lastName}
-                    error={!isProfileValid.isValidLastName}
-                    helperText={
-                      !isProfileValid.isValidLastName
-                        ? "Field is required."
-                        : ""
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    defaultValue={user.email}
-                    error={!isProfileValid.isValidEmail}
-                    helperText={
-                      !isProfileValid.isValidEmail ? "Not valid email." : ""
-                    }
-                  />
-                </Grid>
-              </Grid>
-              <Button
-              id="submit-profile"
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+              <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                <AccountCircleIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Profile
+              </Typography>
+              <Box
+                component="form"
+                noValidate
+                onSubmit={handleProfileSubmit}
+                sx={{ mt: 3 }}
               >
-                Save
-              </Button>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      autoComplete="given-name"
+                      name="firstName"
+                      required
+                      fullWidth
+                      id="firstName"
+                      label="First Name"
+                      defaultValue={user.firstName}
+                      error={!isProfileValid.isValidFirstName}
+                      helperText={
+                        !isProfileValid.isValidFirstName
+                          ? "Field is required."
+                          : ""
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="lastName"
+                      label="Last Name"
+                      name="lastName"
+                      autoComplete="family-name"
+                      defaultValue={user.lastName}
+                      error={!isProfileValid.isValidLastName}
+                      helperText={
+                        !isProfileValid.isValidLastName
+                          ? "Field is required."
+                          : ""
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                      defaultValue={user.email}
+                      error={!isProfileValid.isValidEmail}
+                      helperText={
+                        !isProfileValid.isValidEmail ? "Not valid email." : ""
+                      }
+                    />
+                  </Grid>
+                </Grid>
+                <Button
+                  id="submit-profile"
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Save
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        </Grid>
-        <Grid item xs={12} xl={6} sx={{ px: 2 }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Security
-            </Typography>
+          </Grid>
+          <Grid item xs={12} xl={6} sx={{ px: 2 }}>
             <Box
-              component="form"
-              noValidate
-              onSubmit={handleSecuritySubmit}
-              sx={{ mt: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="currentPassword"
-                    label="Old password"
-                    type="password"
-                    id="currentPassword"
-                    autoComplete="new-password"
-                    error={!isSecurityValid.isValidOldPassword}
-                    helperText={
-                      !isSecurityValid.isValidOldPassword
-                        ? "Not valid password."
-                        : ""
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="newPassword"
-                    label="New password"
-                    type="password"
-                    id="newPassword"
-                    autoComplete="new-password"
-                    error={!isSecurityValid.isValidNewPassword}
-                    helperText={
-                      !isSecurityValid.isValidNewPassword
-                        ? "Not valid password."
-                        : ""
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="confirmPassword"
-                    label="Confirm password"
-                    type="password"
-                    id="confirmPassword"
-                    autoComplete="new-password"
-                    error={!isSecurityValid.isValidConfirmPassword}
-                    helperText={
-                      !isSecurityValid.isValidConfirmPassword
-                        ? "Password mismatch."
-                        : ""
-                    }
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                id="submit-security"
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+              <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Security
+              </Typography>
+              <Box
+                component="form"
+                noValidate
+                onSubmit={handleSecuritySubmit}
+                sx={{ mt: 3 }}
               >
-                Save
-              </Button>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      name="currentPassword"
+                      label="Old password"
+                      type="password"
+                      id="currentPassword"
+                      autoComplete="new-password"
+                      error={!isSecurityValid.isValidOldPassword}
+                      helperText={
+                        !isSecurityValid.isValidOldPassword
+                          ? "Not valid password."
+                          : ""
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      name="newPassword"
+                      label="New password"
+                      type="password"
+                      id="newPassword"
+                      autoComplete="new-password"
+                      error={!isSecurityValid.isValidNewPassword}
+                      helperText={
+                        !isSecurityValid.isValidNewPassword
+                          ? "Not valid password."
+                          : ""
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      name="confirmPassword"
+                      label="Confirm password"
+                      type="password"
+                      id="confirmPassword"
+                      autoComplete="new-password"
+                      error={!isSecurityValid.isValidConfirmPassword}
+                      helperText={
+                        !isSecurityValid.isValidConfirmPassword
+                          ? "Password mismatch."
+                          : ""
+                      }
+                    />
+                  </Grid>
+                </Grid>
+                <Button
+                  id="submit-security"
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Save
+                </Button>
+              </Box>
             </Box>
-          </Box>
+          </Grid>
         </Grid>
-      </Grid>) : (
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: 'center', minHeight: '389px' }}>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "389px",
+          }}
+        >
           <span>
             <CircularProgress size={100} />
           </span>

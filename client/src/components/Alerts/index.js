@@ -1,10 +1,10 @@
-import Snackbar from "@mui/material/Snackbar";
+import { useContext, useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
-import { useState, useContext, useEffect } from "react";
+import Snackbar from "@mui/material/Snackbar";
 import { AppContext } from "../../storage";
 
 export default function Alerts() {
-  const { alert, setAlert } = useContext(AppContext);
+  const { alert } = useContext(AppContext);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

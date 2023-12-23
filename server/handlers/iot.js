@@ -253,7 +253,7 @@ async function createDevice(req, jwttoken) {
       credentialsId: accessToken,
     },
   };
-console.log(jwttoken)
+
   const response = await fetch(apiUrl, {
     method: "POST",
     headers: {

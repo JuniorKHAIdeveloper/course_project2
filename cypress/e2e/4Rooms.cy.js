@@ -5,7 +5,7 @@ describe("Rooms Page", () => {
     });
   });
 
-  it("create device successfully", () => {
+  it("create room successfully", () => {
     cy.visit(`${Cypress.env("host")}/dashboard/rooms`);
     cy.get("#new-room").click();
     cy.get("body").contains("Create new room");

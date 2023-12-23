@@ -2,6 +2,7 @@ import React, { createContext } from "react";
 import { fetchDevices } from "../API/dashboard";
 import { fetchRooms } from "../API/rooms";
 
+
 export const AppContext = createContext({
   user: null,
   devices: [],
@@ -101,7 +102,6 @@ export default function AppContextProvider({ children }) {
   };
 
   const setAlert = (value) => {
-    console.log("runs!")
     setData((currentState) => {
       return {
         ...currentState,
@@ -113,7 +113,7 @@ export default function AppContextProvider({ children }) {
   const updateDevices = async () => {
     const fetchData = async () => {
       const devicesData = await fetchDevices(user);
-      
+
       return devicesData;
     };
 
@@ -125,24 +125,24 @@ export default function AppContextProvider({ children }) {
         devices: data,
       };
     });
-  }
+  };
 
   const updateRooms = async (user) => {
-      const fetchData = async () => {
-        const roomsData = await fetchRooms(user);
-        
-        return roomsData;
-      };
-  
-      const data = await fetchData();
+    const fetchData = async () => {
+      const roomsData = await fetchRooms(user);
 
-      setData((currentState) => {
-        return {
-          ...currentState,
-          rooms: data,
-        };
-      });
-  }
+      return roomsData;
+    };
+
+    const data = await fetchData();
+
+    setData((currentState) => {
+      return {
+        ...currentState,
+        rooms: data,
+      };
+    });
+  };
 
   const setAvailableDevices = (value) => {
     setData((currentState) => {

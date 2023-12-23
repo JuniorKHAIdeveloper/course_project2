@@ -1,5 +1,6 @@
 import { Card, CardActionArea, Grid, Typography } from "@mui/material";
 
+
 export default function DeviceItem({ device }) {
   return (
     <Grid item sm={6} md={4} xl={2} sx={{ p: 1 }}>

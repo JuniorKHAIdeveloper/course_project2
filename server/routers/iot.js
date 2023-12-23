@@ -17,7 +17,6 @@ const {
 const User = require("../models/user");
 const router = new express.Router();
 
-
 router.post("/iot/auth/login", async (req, res) => {
   try {
     const data = await authUser(req);
@@ -79,8 +78,8 @@ router.post("/iot/user", async (req, res) => {
 // update user
 router.patch("/iot/user", async (req, res) => {
   try {
-    await updateUser(req)
-   
+    await updateUser(req);
+
     res.status(201).send();
   } catch (error) {
     console.error("Error:", error);
@@ -110,10 +109,10 @@ async function changePassword(req) {
 
 // change password
 router.post("/iot/auth/changePassword", async (req, res) => {
-  const {userId} = req.body;
+  const { userId } = req.body;
   try {
-    const newToken = await changePassword(req)
-   
+    const newToken = await changePassword(req);
+
     await User.updateOne({ userId: userId }, { token: newToken.token });
     res.cookie("jwttoken", newToken.token);
     res.status(201).send();
@@ -169,7 +168,6 @@ router.post("/iot/device-with-credentials", async (req, res) => {
     const deviceId = await createDevice(req, jwttoken);
     // save device to user app db
     const user = await User.findOne({ userId });
-    console.log(deviceId)
     if (user && req.cookies.jwttoken === user.token) {
       user.devices.push(deviceId);
       await user.save();

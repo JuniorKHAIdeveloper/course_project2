@@ -1,16 +1,17 @@
 import { useContext, useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { AppContext } from "../../storage";
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
-import { Box, Typography } from "@mui/material";
+import { AppContext } from "../../storage";
+
 
 export default function RoomTelemetry() {
   const { roomId } = useParams();
@@ -32,7 +33,6 @@ export default function RoomTelemetry() {
         eventSource.close();
       };
 
-      // Clean up the event source on component unmount
       return () => {
         eventSource.close();
       };
@@ -50,7 +50,7 @@ export default function RoomTelemetry() {
         return (
           key &&
           typeof data !== "string" && (
-            <Box sx={{p: 2}}>
+            <Box sx={{ p: 2 }}>
               <Typography component="h3" variant="h5" sx={{ mb: 2 }}>
                 {key?.[0].toUpperCase() + key?.slice(1)}
               </Typography>

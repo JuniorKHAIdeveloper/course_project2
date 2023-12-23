@@ -1,14 +1,14 @@
-import { useContext } from "react";
-import { Box, Card, Grid, ToggleButton, Typography } from "@mui/material";
-import placeholderSvg from "../../../assets/clean-room.svg";
-import RoomDevices from "../RoomDevices";
-import { AppContext } from "../../../storage";
-import ModalAddDevice from "../ModalAddDevice";
-import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Card, ToggleButton, Typography } from "@mui/material";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import placeholderSvg from "../../../assets/clean-room.svg";
+import { AppContext } from "../../../storage";
+import RoomDevices from "../RoomDevices";
+
 
 export default function Room({ data, setOpen }) {
-  const {user, setAlert, updateRooms} = useContext(AppContext)
+  const { user, setAlert, updateRooms } = useContext(AppContext);
   let navigate = useNavigate();
   function clickHandler() {
     navigate(`${data._id}`);

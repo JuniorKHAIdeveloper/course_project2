@@ -3,7 +3,7 @@ const mqtt = require("mqtt");
 
 const hostname = "127.0.0.1";
 const port = 1883;
-const ACCESS_TOKEN = "DEVICE_1";
+const ACCESS_TOKEN = "DEVICE_2";
 
 // Create an MQTT client
 const client = mqtt.connect(`mqtt://${hostname}:${port}`, {
@@ -24,9 +24,9 @@ function getRandomNumber(min, max) {
   return Math.floor(random + min);
 }
 
-function publishTemperature() {
-  const temperature = getRandomNumber(10, 20); // Generate random temperature data
-  const message = JSON.stringify({ temperature: temperature });
+function publishHumidity() {
+  const humidity = getRandomNumber(60, 80); // Generate random temperature data
+  const message = JSON.stringify({ humidity: humidity });
 
   client.publish(topic, message);
 }
@@ -35,7 +35,7 @@ function publishTemperature() {
 client.on("connect", () => {
   console.log("Connected to ThingsBoard");
 
-  setInterval(publishTemperature, 5000);
+  setInterval(publishHumidity, 5000);
 });
 
 // Handle any errors

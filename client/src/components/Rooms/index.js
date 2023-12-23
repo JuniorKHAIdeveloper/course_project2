@@ -1,13 +1,12 @@
+import { useContext, useEffect, useState } from "react";
 import { Box, CircularProgress } from "@mui/material";
-import { useContext, useState, useEffect } from "react";
+import Typography from "@mui/material/Typography";
+import { fetchRooms } from "../../API/rooms";
 import { AppContext } from "../../storage";
-import Copyright from "../Copyright";
 import ModalAddDevice from "./ModalAddDevice";
 import ModalNewRoom from "./ModalNewRoom";
 import NewRoom from "./NewRoom";
 import Room from "./Room";
-import Typography from "@mui/material/Typography";
-import { fetchRooms } from "../../API/rooms";
 
 
 export default function Rooms() {
@@ -18,18 +17,11 @@ export default function Rooms() {
     isModalOpen,
     setIsModalOpen,
     isModalAddDeviceOpen,
-    availableDevices,
     setIsModalAddDeviceOpen,
-    currentRoomId,
     setCurrentRoomId,
     setCurrentRoomDevices,
     setRooms,
-    updateRooms,
-    setAvailableDevices,
   } = useContext(AppContext);
-
-  
-  // const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -45,7 +37,7 @@ export default function Rooms() {
   }, [user, isModalOpen, isModalAddDeviceOpen]);
 
   function getDevicesWithConnectionStatus(allDevices, currentRoomDevices) {
-    return allDevices?.map(device => {
+    return allDevices?.map((device) => {
       const isConnected = currentRoomDevices.includes(device.id.id);
       return {
         deviceId: device.id.id,
@@ -56,7 +48,10 @@ export default function Rooms() {
   }
 
   function currentRoomDevicesHandler(allDevices, currentRoomDevices) {
-    const parsedDevices = getDevicesWithConnectionStatus(allDevices, currentRoomDevices);
+    const parsedDevices = getDevicesWithConnectionStatus(
+      allDevices,
+      currentRoomDevices
+    );
     setCurrentRoomDevices(parsedDevices);
   }
 
@@ -64,19 +59,24 @@ export default function Rooms() {
     const otherRooms = rooms.filter((room) => room._id !== roomId);
     const otherRoomsDevices = otherRooms.map((room) => room.devices);
     const arrayOtherDevices = otherRoomsDevices.flat();
-    const currentRoomAvailableDevices = devices.filter((device) => !arrayOtherDevices.includes(device.id.id));
-    console.log(devices)
-    console.log('Array of devices', currentRoomAvailableDevices);
+    const currentRoomAvailableDevices = devices.filter(
+      (device) => !arrayOtherDevices.includes(device.id.id)
+    );
+
     return currentRoomAvailableDevices;
   }
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography component="h3" variant="h5">New Room:</Typography>
+      <Typography component="h3" variant="h5">
+        New Room:
+      </Typography>
       <div>
         <NewRoom openModalHandler={() => setIsModalOpen(true)} />
       </div>
-      <Typography component="h3" variant="h5">Rooms:</Typography>
+      <Typography component="h3" variant="h5">
+        Rooms:
+      </Typography>
       {isLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <span>
@@ -93,7 +93,7 @@ export default function Rooms() {
                 setOpen={() => {
                   setIsModalAddDeviceOpen(true);
                   setCurrentRoomId(room._id);
-                  const roomDevices = filterDevices(room._id)
+                  const roomDevices = filterDevices(room._id);
                   currentRoomDevicesHandler(roomDevices, room.devices);
                 }}
               />
